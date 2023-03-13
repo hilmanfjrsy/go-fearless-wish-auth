@@ -1,15 +1,16 @@
 package middleware
 
 import (
+	"encoding/json"
 	"fmt"
-	"go-todo-app/datatransfers"
 	"go-todo-app/utils"
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
-	"github.com/dgrijalva/jwt-go/v4"
 	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v4"
 )
 
 func AuthMiddleware(c *gin.Context) {
@@ -23,15 +24,36 @@ func AuthMiddleware(c *gin.Context) {
 		utils.ResponseError(c, http.StatusUnauthorized, err.Error())
 		return
 	}
-	c.Set("user_id", claims.ID)
+	c.Set("user_id", claims.UserId)
 	c.Next()
 }
 
-func parseToken(tokenString, secret string) (claims datatransfers.JWTClaims, err error) {
-	if token, err := jwt.ParseWithClaims(tokenString, &claims, func(token *jwt.Token) (interface{}, error) {
+func parseToken(tokenString, secret string) (claims utils.AuthClaims, err error) {
+	decodedToken, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
 		return []byte(secret), nil
-	}); err != nil || !token.Valid {
-		return datatransfers.JWTClaims{}, fmt.Errorf("invalid token. %s", err)
+	})
+	if err != nil {
+		return utils.AuthClaims{}, err
 	}
-	return
+
+	if claims, ok := decodedToken.Claims.(jwt.MapClaims); ok && decodedToken.Valid &&
+		claims.VerifyAudience("fearless-wish-auth", true) &&
+		claims.VerifyExpiresAt(time.Now().Unix(), true) &&
+		claims.VerifyIssuedAt(time.Now().Unix(), true) {
+
+		AuthClaims := utils.AuthClaims{}
+		b, err := json.Marshal(claims)
+		if err != nil {
+			return utils.AuthClaims{}, err
+		}
+		err = json.Unmarshal(b, &AuthClaims)
+		if err != nil {
+			return utils.AuthClaims{}, err
+		}
+		return AuthClaims, nil
+	}
+	return utils.AuthClaims{}, err
 }

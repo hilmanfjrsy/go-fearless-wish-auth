@@ -3,7 +3,6 @@ module go-todo-app
 go 1.19
 
 require (
-	github.com/dgrijalva/jwt-go/v4 v4.0.0-preview1
 	github.com/gin-gonic/gin v1.9.0
 	github.com/joho/godotenv v1.5.1
 	golang.org/x/crypto v0.7.0
@@ -19,6 +18,7 @@ require (
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.11.2 // indirect
 	github.com/goccy/go-json v0.10.0 // indirect
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20221227161230-091c0ba34f0a // indirect
 	github.com/jackc/pgx/v5 v5.3.0 // indirect
