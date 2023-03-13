@@ -17,7 +17,6 @@ type UserRegister struct {
 
 type UserUpdate struct {
 	Email string `json:"email" binding:"-"`
-	Phone string `json:"phone" binding:"-"`
 }
 
 type UserInfo struct {

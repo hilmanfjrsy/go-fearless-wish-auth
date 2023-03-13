@@ -13,7 +13,7 @@ type UserOrm struct {
 	Db *gorm.DB
 }
 
-func (d *UserOrm) GetById(id int) (User, error) {
+func (d *UserOrm) GetById(id uint) (User, error) {
 	user := User{}
 	err := d.Db.Model(&User{}).Where("id = ?", id).First(&user).Error
 	return user, err
@@ -31,5 +31,5 @@ func (d *UserOrm) InsertUser(user User) (uint, error) {
 }
 
 func (d *UserOrm) UpdateUser(user User) error {
-	return d.Db.Model(&User{}).Model(&user).Updates(&user).Error
+	return d.Db.Model(&user).Updates(&user).Error
 }

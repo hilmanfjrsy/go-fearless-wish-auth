@@ -1,9 +1,9 @@
 package main
 
 import (
-	"fmt"
 	"go-todo-app/config"
 	"go-todo-app/controllers"
+	"go-todo-app/middleware"
 	"go-todo-app/model"
 	"log"
 
@@ -23,9 +23,13 @@ func main() {
 	config.ConnectDatabase()
 	model.AutoMigrate()
 	r := gin.Default()
-	fmt.Println("Ipun")
+
 	v1 := r.Group("/api/v1")
 	v1.POST("/login", controllers.Login)
 	v1.POST("/register", controllers.Register)
+
+	user := v1.Group("/user")
+	user.GET("", middleware.AuthMiddleware, controllers.GetUser)
+	user.PATCH("", middleware.AuthMiddleware, controllers.UpdateUser)
 	r.Run()
 }
