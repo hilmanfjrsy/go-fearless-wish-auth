@@ -20,13 +20,17 @@ A simple authentication with Go, based on [gin](https://github.com/gin-gonic/gin
 ├── config
 │   └── database.go
 ├── controllers
-│   └── authentication.go
+│   ├── authentication.go
+│   └── user.go
 ├── datatransfers
+│   ├── auth.go
 │   └── user.go
 ├── docker-compose.yml
 ├── go.mod
 ├── go.sum
 ├── main.go
+├── middleware
+│   └── auth.go
 ├── model
 │   ├── auto_migrate.go
 │   └── user.go
